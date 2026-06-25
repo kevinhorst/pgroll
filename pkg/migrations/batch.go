@@ -23,8 +23,14 @@ func NewBatch(members []*RawMigration) (*Batch, error) {
 	}
 
 	for _, m := range members {
-		if _, err := ParseMigration(m); err != nil {
+		parsed, err := ParseMigration(m)
+		if err != nil {
 			return nil, fmt.Errorf("batch member %q: %w", m.Name, err)
+		}
+		for _, op := range parsed.Operations {
+			if _, ok := op.(*OpRawSQL); ok {
+				return nil, fmt.Errorf("batch member %q contains a raw SQL operation, which is not supported in batch migrations", m.Name)
+			}
 		}
 	}
 

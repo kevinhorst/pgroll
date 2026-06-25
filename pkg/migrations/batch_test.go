@@ -28,6 +28,25 @@ func TestNewBatch(t *testing.T) {
 		assert.Contains(t, err.Error(), "02_two")
 	})
 
+	t.Run("rejects raw sql operations", func(t *testing.T) {
+		_, err := NewBatch([]*RawMigration{
+			rawMig("01_one", `[{"create_table":{"name":"t1","columns":[{"name":"id","type":"int","pk":true}]}}]`),
+			rawMig("02_sql", `[{"sql":{"up":"SELECT 1"}}]`),
+		})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "02_sql")
+		assert.Contains(t, err.Error(), "raw SQL operation")
+	})
+
+	t.Run("rejects raw sql even with onComplete", func(t *testing.T) {
+		_, err := NewBatch([]*RawMigration{
+			rawMig("01_one", `[{"create_table":{"name":"t1","columns":[{"name":"id","type":"int","pk":true}]}}]`),
+			rawMig("02_sql", `[{"sql":{"up":"SELECT 1","onComplete":true}}]`),
+		})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "raw SQL operation")
+	})
+
 	t.Run("valid batch", func(t *testing.T) {
 		b, err := NewBatch([]*RawMigration{
 			rawMig("01_create_users", `[{"create_table":{"name":"users","columns":[{"name":"id","type":"int","pk":true}]}}]`),
