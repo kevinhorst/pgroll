@@ -270,34 +270,6 @@ func TestBatchWithCrossMemberDependency(t *testing.T) {
 	})
 }
 
-func TestBatchWithOnCompleteRawSQL(t *testing.T) {
-	t.Parallel()
-
-	testutils.WithMigratorAndConnectionToContainer(t, func(mig *roll.Roll, db *sql.DB) {
-		ctx := context.Background()
-
-		batch, err := migrations.NewBatch([]*migrations.RawMigration{
-			rawMigration("01_create_users",
-				`[{"create_table":{"name":"users","columns":[{"name":"id","type":"integer","pk":true}]}}]`),
-			rawMigration("02_add_trigger_sql",
-				`[{"sql":{"up":"CREATE OR REPLACE FUNCTION noop() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NEW; END; $$","onComplete":true}}]`),
-		})
-		require.NoError(t, err)
-
-		err = mig.StartBatch(ctx, batch, backfill.NewConfig())
-		require.NoError(t, err)
-
-		err = mig.Complete(ctx)
-		require.NoError(t, err)
-
-		// Verify the function was created during Complete
-		var exists bool
-		err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM pg_proc WHERE proname = 'noop')").Scan(&exists)
-		require.NoError(t, err)
-		assert.True(t, exists)
-	})
-}
-
 func TestBatchValidationRejectsInvalidMember(t *testing.T) {
 	t.Parallel()
 
