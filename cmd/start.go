@@ -117,3 +117,41 @@ func runMigration(ctx context.Context, m *roll.Roll, migration *migrations.Migra
 
 	return nil
 }
+
+func runBatch(ctx context.Context, m *roll.Roll, batch *migrations.Batch, complete bool, c *backfill.Config) error {
+	sp, _ := pterm.DefaultSpinner.WithText(fmt.Sprintf("Starting batch migration (%d migrations)...", len(batch.Members))).Start()
+	c.AddCallback(func(n int64, total int64) {
+		if total > 0 {
+			percent := float64(n) / float64(total) * 100
+			percent = math.Min(percent, 100)
+			sp.UpdateText(fmt.Sprintf("%d records complete... (%.2f%%)", n, percent))
+		} else {
+			sp.UpdateText(fmt.Sprintf("%d records complete...", n))
+		}
+	})
+
+	err := m.StartBatch(ctx, batch, c)
+	if err != nil {
+		sp.Fail(fmt.Sprintf("Failed to start batch migration: %s", err))
+		return err
+	}
+
+	if complete {
+		if err = m.Complete(ctx); err != nil {
+			sp.Fail(fmt.Sprintf("Failed to complete batch migration: %s", err))
+			return err
+		}
+	}
+
+	var msg string
+	if m.UseVersionSchema() {
+		viewName := roll.VersionedSchemaName(flags.Schema(), batch.VersionSchemaName())
+		msg = fmt.Sprintf("New version of the schema available under the postgres %q schema", viewName)
+	} else {
+		msg = fmt.Sprintf("Batch migration %q started successfully", batch.Name())
+	}
+
+	sp.Success(msg)
+
+	return nil
+}

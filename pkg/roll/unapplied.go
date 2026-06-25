@@ -18,9 +18,9 @@ import (
 // If the local order of migrations does not match the order of migrations in
 // the schema history, an `ErrMismatchedMigration` error is returned.
 func (m *Roll) UnappliedMigrations(ctx context.Context, dir fs.FS) ([]*migrations.RawMigration, error) {
-	history, err := m.State().SchemaHistory(ctx, m.Schema())
+	appliedNames, err := m.State().AppliedMigrationNames(ctx, m.Schema())
 	if err != nil {
-		return nil, fmt.Errorf("reading schema history: %w", err)
+		return nil, fmt.Errorf("reading applied migration names: %w", err)
 	}
 
 	baseline, err := m.State().LatestBaseline(ctx, m.Schema())
@@ -65,17 +65,17 @@ func (m *Roll) UnappliedMigrations(ctx context.Context, dir fs.FS) ([]*migration
 	// Find the index of the first local migration that has not been applied to
 	// the database and ensure that the order of migrations in the database
 	// matches the order of migrations in the local directory.
+	// This handles both individual migrations and batch entries (which are
+	// expanded into individual member names by AppliedMigrationNames).
 	var appliedCount int
 	for _, m := range migsAfterBaseline {
-		// Stop when we've checked all the migrations in history
-		if appliedCount >= len(history) {
+		if appliedCount >= len(appliedNames) {
 			break
 		}
 
-		remoteMigration := history[appliedCount].Migration
-		if remoteMigration.Name != m.Name {
+		if appliedNames[appliedCount] != m.Name {
 			return nil, fmt.Errorf("%w: remote=%q, local=%q",
-				ErrMismatchedMigration, remoteMigration.Name, m.Name)
+				ErrMismatchedMigration, appliedNames[appliedCount], m.Name)
 		}
 
 		appliedCount++

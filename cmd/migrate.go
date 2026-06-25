@@ -15,14 +15,21 @@ import (
 )
 
 func migrateCmd() *cobra.Command {
-	var complete, expectOne bool
+	var complete, expectOne, batch bool
 	var batchSize int
 	var batchDelay time.Duration
 
 	migrateCmd := &cobra.Command{
-		Use:       "migrate <directory>",
-		Short:     "Apply outstanding migrations from a directory to a database",
-		Example:   "migrate ./migrations",
+		Use:   "migrate <directory>",
+		Short: "Apply outstanding migrations from a directory to a database",
+		Long: `Apply outstanding migrations from a directory to a database.
+
+By default, each migration is applied sequentially as its own expand/contract
+transition. Use --batch to apply all unapplied migrations as a single atomic
+expand/contract transition — one version schema, one backfill pass, one set
+of sync triggers.`,
+		Example: `  migrate ./migrations
+  migrate --batch --complete ./migrations`,
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"directory"},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -78,9 +85,26 @@ func migrateCmd() *cobra.Command {
 				return nil
 			}
 
+			if batch && expectOne {
+				return fmt.Errorf("--batch and --expect-one are mutually exclusive")
+			}
+
 			// In 'expect one' mode, abort if there is more than one unapplied migration
 			if expectOne && len(rawMigs) > 1 {
 				return fmt.Errorf("expected one migration to apply but found %d", len(rawMigs))
+			}
+
+			backfillConfig := backfill.NewConfig(
+				backfill.WithBatchSize(batchSize),
+				backfill.WithBatchDelay(batchDelay),
+			)
+
+			if batch && len(rawMigs) >= 2 {
+				b, err := migrations.NewBatch(rawMigs)
+				if err != nil {
+					return fmt.Errorf("failed to create batch: %w", err)
+				}
+				return runBatch(ctx, m, b, complete, backfillConfig)
 			}
 
 			// fail early if there is an incompatible migration
@@ -88,11 +112,6 @@ func migrateCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("failed to run migrate: %w", err)
 			}
-
-			backfillConfig := backfill.NewConfig(
-				backfill.WithBatchSize(batchSize),
-				backfill.WithBatchDelay(batchDelay),
-			)
 
 			// Run all migrations after the latest version up to the final migration,
 			// completing each one.
@@ -111,6 +130,7 @@ func migrateCmd() *cobra.Command {
 	migrateCmd.Flags().DurationVar(&batchDelay, "backfill-batch-delay", backfill.DefaultDelay, "Duration of delay between batch backfills (eg. 1s, 1000ms)")
 	migrateCmd.Flags().BoolVar(&expectOne, "expect-one", false, "Abort if there is more than one migration to be applied")
 	migrateCmd.Flags().BoolVarP(&complete, "complete", "c", false, "complete the final migration rather than leaving it active")
+	migrateCmd.Flags().BoolVar(&batch, "batch", false, "apply all unapplied migrations as a single expand/contract transition")
 
 	return migrateCmd
 }

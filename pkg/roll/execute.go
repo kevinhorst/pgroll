@@ -73,6 +73,67 @@ func (m *Roll) StartDDLOperations(ctx context.Context, migration *migrations.Mig
 		return nil, fmt.Errorf("unable to start migration: %w", err)
 	}
 
+	return m.executeDDL(ctx, migration)
+}
+
+// StartBatch applies a batch of migrations as a single expand/contract transition.
+func (m *Roll) StartBatch(ctx context.Context, batch *migrations.Batch, cfg *backfill.Config) error {
+	hasExistingSchema, err := m.state.HasExistingSchemaWithoutHistory(ctx, m.schema)
+	if err != nil {
+		return fmt.Errorf("failed to check for existing schema: %w", err)
+	}
+	if hasExistingSchema {
+		return ErrExistingSchemaWithoutHistory
+	}
+
+	composite, err := batch.CompositeMigration()
+	if err != nil {
+		return fmt.Errorf("failed to build composite migration: %w", err)
+	}
+
+	m.logger.LogMigrationStart(composite)
+
+	if !m.skipValidation {
+		virtualSchema, err := m.state.ReadSchema(ctx, m.schema)
+		if err != nil {
+			return fmt.Errorf("unable to read schema for validation: %w", err)
+		}
+		for _, member := range batch.Members {
+			parsed, err := migrations.ParseMigration(member)
+			if err != nil {
+				return fmt.Errorf("batch member %q: %w", member.Name, err)
+			}
+			if err := parsed.Validate(ctx, virtualSchema); err != nil {
+				return fmt.Errorf("batch member %q is invalid: %w", member.Name, err)
+			}
+			if err := parsed.UpdateVirtualSchema(ctx, virtualSchema); err != nil {
+				return fmt.Errorf("batch member %q: unable to update virtual schema: %w", member.Name, err)
+			}
+		}
+	}
+
+	active, err := m.state.IsActiveMigrationPeriod(ctx, m.schema)
+	if err != nil {
+		return err
+	}
+	if active {
+		return fmt.Errorf("a migration for schema %q is already in progress", m.schema)
+	}
+
+	if err := m.state.StartBatch(ctx, m.schema, batch); err != nil {
+		return fmt.Errorf("unable to start batch: %w", err)
+	}
+
+	job, err := m.executeDDL(ctx, composite)
+	if err != nil {
+		return err
+	}
+
+	return m.performBackfills(ctx, job, cfg)
+}
+
+// executeDDL runs hooks, executes each operation's Start, and creates version schema views.
+func (m *Roll) executeDDL(ctx context.Context, migration *migrations.Migration) (*backfill.Job, error) {
 	// run any BeforeStartDDL hooks
 	if m.migrationHooks.BeforeStartDDL != nil {
 		if err := m.migrationHooks.BeforeStartDDL(m); err != nil {

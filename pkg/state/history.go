@@ -19,6 +19,7 @@ import (
 // of a schema
 type HistoryEntry struct {
 	Migration migrations.RawMigration
+	RawJSON   json.RawMessage // full stored JSON, preserved for batch detection
 	CreatedAt time.Time
 }
 
@@ -67,6 +68,7 @@ func (s *State) SchemaHistory(ctx context.Context, schema string) ([]HistoryEntr
 
 		entries = append(entries, HistoryEntry{
 			Migration: mig,
+			RawJSON:   json.RawMessage(rawMigration),
 			CreatedAt: createdAt,
 		})
 	}

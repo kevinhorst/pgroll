@@ -336,6 +336,134 @@ func TestMissingMigrationsWithOldMigrationFormats(t *testing.T) {
 	})
 }
 
+func TestMissingMigrationsWithBatch(t *testing.T) {
+	t.Parallel()
+
+	t.Run("missing intermediate batch member is detected", func(t *testing.T) {
+		// Local dir has members a and c but not b
+		fs := fstest.MapFS{
+			"01_create_t1.json": &fstest.MapFile{Data: createTableMigJSON(t, "01_create_t1", "t1")},
+			"03_create_t3.json": &fstest.MapFile{Data: createTableMigJSON(t, "03_create_t3", "t3")},
+		}
+
+		testutils.WithMigratorAndConnectionToContainer(t, func(m *roll.Roll, _ *sql.DB) {
+			ctx := context.Background()
+
+			batch, err := migrations.NewBatch([]*migrations.RawMigration{
+				createTableRawMig("01_create_t1", "t1"),
+				createTableRawMig("02_create_t2", "t2"),
+				createTableRawMig("03_create_t3", "t3"),
+			})
+			require.NoError(t, err)
+			err = m.StartBatch(ctx, batch, backfill.NewConfig())
+			require.NoError(t, err)
+			err = m.Complete(ctx)
+			require.NoError(t, err)
+
+			migs, err := m.MissingMigrations(ctx, fs)
+			require.NoError(t, err)
+
+			require.Len(t, migs, 1)
+			require.Equal(t, "02_create_t2", migs[0].Name)
+		})
+	})
+
+	t.Run("mixed individual and batch history", func(t *testing.T) {
+		fs := fstest.MapFS{
+			"01_create_t1.json": &fstest.MapFile{Data: createTableMigJSON(t, "01_create_t1", "t1")},
+			"02_create_t2.json": &fstest.MapFile{Data: createTableMigJSON(t, "02_create_t2", "t2")},
+			"03_create_t3.json": &fstest.MapFile{Data: createTableMigJSON(t, "03_create_t3", "t3")},
+			// 04 is missing locally
+			"05_create_t5.json": &fstest.MapFile{Data: createTableMigJSON(t, "05_create_t5", "t5")},
+		}
+
+		testutils.WithMigratorAndConnectionToContainer(t, func(m *roll.Roll, _ *sql.DB) {
+			ctx := context.Background()
+
+			// Individual migration
+			mig1, err := migrations.ParseMigration(createTableRawMig("01_create_t1", "t1"))
+			require.NoError(t, err)
+			err = m.Start(ctx, mig1, backfill.NewConfig())
+			require.NoError(t, err)
+			err = m.Complete(ctx)
+			require.NoError(t, err)
+
+			// Batch of 2 and 3
+			batch, err := migrations.NewBatch([]*migrations.RawMigration{
+				createTableRawMig("02_create_t2", "t2"),
+				createTableRawMig("03_create_t3", "t3"),
+			})
+			require.NoError(t, err)
+			err = m.StartBatch(ctx, batch, backfill.NewConfig())
+			require.NoError(t, err)
+			err = m.Complete(ctx)
+			require.NoError(t, err)
+
+			// Another batch of 4 and 5
+			batch2, err := migrations.NewBatch([]*migrations.RawMigration{
+				createTableRawMig("04_create_t4", "t4"),
+				createTableRawMig("05_create_t5", "t5"),
+			})
+			require.NoError(t, err)
+			err = m.StartBatch(ctx, batch2, backfill.NewConfig())
+			require.NoError(t, err)
+			err = m.Complete(ctx)
+			require.NoError(t, err)
+
+			migs, err := m.MissingMigrations(ctx, fs)
+			require.NoError(t, err)
+
+			require.Len(t, migs, 1)
+			require.Equal(t, "04_create_t4", migs[0].Name)
+		})
+	})
+
+	t.Run("all batch members present locally means none missing", func(t *testing.T) {
+		fs := fstest.MapFS{
+			"01_create_t1.json": &fstest.MapFile{Data: createTableMigJSON(t, "01_create_t1", "t1")},
+			"02_create_t2.json": &fstest.MapFile{Data: createTableMigJSON(t, "02_create_t2", "t2")},
+		}
+
+		testutils.WithMigratorAndConnectionToContainer(t, func(m *roll.Roll, _ *sql.DB) {
+			ctx := context.Background()
+
+			batch, err := migrations.NewBatch([]*migrations.RawMigration{
+				createTableRawMig("01_create_t1", "t1"),
+				createTableRawMig("02_create_t2", "t2"),
+			})
+			require.NoError(t, err)
+			err = m.StartBatch(ctx, batch, backfill.NewConfig())
+			require.NoError(t, err)
+			err = m.Complete(ctx)
+			require.NoError(t, err)
+
+			migs, err := m.MissingMigrations(ctx, fs)
+			require.NoError(t, err)
+			require.Len(t, migs, 0)
+		})
+	})
+}
+
+func createTableMigJSON(t *testing.T, name, tableName string) []byte {
+	t.Helper()
+	mig := &migrations.Migration{
+		Name:       name,
+		Operations: migrations.Operations{createTableOp(tableName)},
+	}
+	b, err := json.Marshal(mig)
+	require.NoError(t, err)
+	return b
+}
+
+func createTableRawMig(name, tableName string) *migrations.RawMigration {
+	ops := migrations.Operations{createTableOp(tableName)}
+	opsJSON, _ := json.Marshal(ops)
+	return &migrations.RawMigration{
+		Name:       name,
+		Operations: opsJSON,
+	}
+}
+
 func exampleMig(t *testing.T, name string) *migrations.Migration {
 	t.Helper()
 

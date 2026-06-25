@@ -37,13 +37,25 @@ func (m *Roll) MissingMigrations(ctx context.Context, dir fs.FS) ([]*migrations.
 	}
 
 	// Find all migrations that have been applied to the database but are missing
-	// from the local directory
+	// from the local directory. Batch entries are expanded into individual members.
 	migs := make([]*migrations.RawMigration, 0, len(history))
 	for _, h := range history {
-		if _, ok := localMigNames[h.Migration.Name]; ok {
-			continue
+		if migrations.IsBatchJSON(h.RawJSON) {
+			members, err := migrations.DecodeBatchRawMembers(h.RawJSON)
+			if err != nil {
+				return nil, fmt.Errorf("decoding batch members: %w", err)
+			}
+			for _, member := range members {
+				if _, ok := localMigNames[member.Name]; !ok {
+					migs = append(migs, member)
+				}
+			}
+		} else {
+			if _, ok := localMigNames[h.Migration.Name]; ok {
+				continue
+			}
+			migs = append(migs, &h.Migration)
 		}
-		migs = append(migs, &h.Migration)
 	}
 
 	return migs, nil

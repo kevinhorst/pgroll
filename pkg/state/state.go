@@ -247,6 +247,67 @@ func (s *State) Start(ctx context.Context, schemaname string, migration *migrati
 	return err
 }
 
+// StartBatch creates a new migration from a batch of migrations, storing the
+// batch envelope as the migration content.
+func (s *State) StartBatch(ctx context.Context, schemaname string, batch *migrations.Batch) error {
+	rawEnvelope, err := encodeBatchEnvelope(batch)
+	if err != nil {
+		return fmt.Errorf("unable to encode batch envelope: %w", err)
+	}
+
+	stmt := fmt.Sprintf(`INSERT INTO %[1]s.migrations (schema, name, parent, migration) VALUES ($1, $2, %[1]s.latest_migration($1), $3)`,
+		pq.QuoteIdentifier(s.schema))
+
+	_, err = s.pgConn.ExecContext(ctx, stmt, schemaname, batch.Name(), rawEnvelope)
+	return err
+}
+
+// AppliedMigrationNames returns a flat list of all applied migration names
+// since the latest baseline, expanding batch entries into individual member names.
+func (s *State) AppliedMigrationNames(ctx context.Context, schema string) ([]string, error) {
+	rows, err := s.pgConn.QueryContext(ctx,
+		fmt.Sprintf(`SELECT name, migration
+			FROM %[1]s.migrations
+			WHERE schema=$1
+			AND created_at > COALESCE(
+			(
+				SELECT MAX(created_at) FROM %[1]s.migrations
+				WHERE schema = $1 AND migration_type = 'baseline'
+			),
+			'-infinity'::timestamptz
+			) ORDER BY created_at`,
+			pq.QuoteIdentifier(s.schema)), schema)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var names []string
+	for rows.Next() {
+		var name, rawMigration string
+		if err := rows.Scan(&name, &rawMigration); err != nil {
+			return nil, fmt.Errorf("row scan: %w", err)
+		}
+
+		raw := []byte(rawMigration)
+		if migrations.IsBatchJSON(raw) {
+			memberNames, err := migrations.DecodeBatchMemberNames(raw)
+			if err != nil {
+				return nil, fmt.Errorf("decoding batch members for %q: %w", name, err)
+			}
+			names = append(names, memberNames...)
+		} else {
+			names = append(names, name)
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating rows: %w", err)
+	}
+
+	return names, nil
+}
+
 // Complete marks a migration as completed
 func (s *State) Complete(ctx context.Context, schema, name string) error {
 	res, err := s.pgConn.ExecContext(ctx, fmt.Sprintf("UPDATE %[1]s.migrations SET done=$1, resulting_schema=(SELECT %[1]s.read_schema($2)) WHERE schema=$2 AND name=$3 AND done=$4", pq.QuoteIdentifier(s.schema)), true, schema, name, false)
