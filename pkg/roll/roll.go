@@ -10,9 +10,9 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/xataio/pgroll/pkg/db"
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/state"
+	"github.com/kevinhorst/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/state"
 )
 
 type PGVersion int

@@ -5,7 +5,7 @@ package migrations
 import (
 	"strings"
 
-	"github.com/xataio/pgroll/pkg/schema"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 )
 
 // Validate checks that the ForeignKeyReference is valid

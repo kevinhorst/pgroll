@@ -8,9 +8,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/kevinhorst/pgroll/cmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/xataio/pgroll/cmd"
 )
 
 type Result struct {

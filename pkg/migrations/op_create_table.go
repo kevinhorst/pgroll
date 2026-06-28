@@ -8,8 +8,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/xataio/pgroll/pkg/db"
-	"github.com/xataio/pgroll/pkg/schema"
+	"github.com/kevinhorst/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 )
 
 var (

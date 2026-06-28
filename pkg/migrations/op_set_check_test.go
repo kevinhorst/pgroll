@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/xataio/pgroll/internal/testutils"
-	"github.com/xataio/pgroll/pkg/backfill"
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/internal/testutils"
+	"github.com/kevinhorst/pgroll/pkg/backfill"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 func TestSetCheckConstraint(t *testing.T) {

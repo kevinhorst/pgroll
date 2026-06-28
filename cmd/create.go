@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
-	"github.com/xataio/pgroll/pkg/migrations"
 )
 
 func createCmd() *cobra.Command {

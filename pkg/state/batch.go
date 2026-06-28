@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 // storedBatchEnvelope is the JSON structure persisted in the migrations table's

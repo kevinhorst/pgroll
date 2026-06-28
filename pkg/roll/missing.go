@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 // MissingMigrations returns the slice of migrations that have been applied to

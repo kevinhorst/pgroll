@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 var (

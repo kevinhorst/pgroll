@@ -5,8 +5,8 @@ package connstr_test
 import (
 	"testing"
 
+	"github.com/kevinhorst/pgroll/internal/connstr"
 	"github.com/stretchr/testify/assert"
-	"github.com/xataio/pgroll/internal/connstr"
 )
 
 func TestAppendSearchPathOption(t *testing.T) {

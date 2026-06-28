@@ -2,7 +2,7 @@
 
 package expect
 
-import "github.com/xataio/pgroll/pkg/migrations"
+import "github.com/kevinhorst/pgroll/pkg/migrations"
 
 var CreateTableOp1 = &migrations.OpCreateTable{
 	Name: "foo",

@@ -7,12 +7,12 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/kevinhorst/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/pkg/roll"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgroll/pkg/db"
-	"github.com/xataio/pgroll/pkg/roll"
 
-	"github.com/xataio/pgroll/internal/defaults"
-	"github.com/xataio/pgroll/internal/testutils"
+	"github.com/kevinhorst/pgroll/internal/defaults"
+	"github.com/kevinhorst/pgroll/internal/testutils"
 )
 
 func TestMain(m *testing.M) {

@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/xataio/pgroll/cmd/flags"
+	"github.com/kevinhorst/pgroll/cmd/flags"
 
 	"github.com/spf13/cobra"
 )

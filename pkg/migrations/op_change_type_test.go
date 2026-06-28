@@ -6,13 +6,13 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/xataio/pgroll/internal/testutils"
+	"github.com/kevinhorst/pgroll/internal/testutils"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/xataio/pgroll/pkg/backfill"
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/roll"
+	"github.com/kevinhorst/pgroll/pkg/backfill"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/roll"
 )
 
 func TestChangeColumnType(t *testing.T) {

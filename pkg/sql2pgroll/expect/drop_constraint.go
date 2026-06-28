@@ -3,8 +3,8 @@
 package expect
 
 import (
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/sql2pgroll"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/sql2pgroll"
 )
 
 func OpDropConstraintWithTable(table string) *migrations.OpDropMultiColumnConstraint {

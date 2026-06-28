@@ -5,7 +5,7 @@ package sql2pgroll
 import (
 	pgq "github.com/xataio/pg_query_go/v6"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 // convertRenameStmt converts RenameStmt nodes to pgroll operations.

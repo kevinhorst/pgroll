@@ -10,9 +10,9 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/xataio/pgroll/pkg/backfill"
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/schema"
+	"github.com/kevinhorst/pgroll/pkg/backfill"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 )
 
 func (m *Roll) Validate(ctx context.Context, migration *migrations.Migration) error {

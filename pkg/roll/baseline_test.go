@@ -7,11 +7,11 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/kevinhorst/pgroll/internal/testutils"
+	"github.com/kevinhorst/pgroll/pkg/roll"
+	"github.com/kevinhorst/pgroll/pkg/schema"
+	"github.com/kevinhorst/pgroll/pkg/state"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgroll/internal/testutils"
-	"github.com/xataio/pgroll/pkg/roll"
-	"github.com/xataio/pgroll/pkg/schema"
-	"github.com/xataio/pgroll/pkg/state"
 )
 
 func TestBaseline(t *testing.T) {

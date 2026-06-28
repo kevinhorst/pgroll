@@ -1,4 +1,4 @@
-module github.com/xataio/pgroll
+module github.com/kevinhorst/pgroll
 
 go 1.26.3
 

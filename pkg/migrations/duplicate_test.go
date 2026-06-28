@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	pgq "github.com/xataio/pg_query_go/v6"
 
-	"github.com/xataio/pgroll/pkg/schema"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 )
 
 var table = &schema.Table{

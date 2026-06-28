@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/xataio/pgroll/cmd/flags"
-	"github.com/xataio/pgroll/pkg/state"
+	"github.com/kevinhorst/pgroll/cmd/flags"
+	"github.com/kevinhorst/pgroll/pkg/state"
 )
 
 var analyzeCmd = &cobra.Command{

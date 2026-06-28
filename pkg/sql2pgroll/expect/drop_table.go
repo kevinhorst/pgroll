@@ -3,7 +3,7 @@
 package expect
 
 import (
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 var DropTableOp1 = &migrations.OpDropTable{

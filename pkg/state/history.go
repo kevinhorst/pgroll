@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 	"github.com/lib/pq"
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/schema"
 )
 
 // HistoryEntry represents a single migration in the migration history

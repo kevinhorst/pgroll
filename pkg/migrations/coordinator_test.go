@@ -5,9 +5,9 @@ package migrations
 import (
 	"testing"
 
+	"github.com/kevinhorst/pgroll/pkg/backfill"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgroll/pkg/backfill"
-	"github.com/xataio/pgroll/pkg/schema"
 )
 
 func TestCoordinator(t *testing.T) {

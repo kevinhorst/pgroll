@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/xataio/pgroll/cmd/flags"
-	"github.com/xataio/pgroll/pkg/roll"
-	"github.com/xataio/pgroll/pkg/state"
+	"github.com/kevinhorst/pgroll/cmd/flags"
+	"github.com/kevinhorst/pgroll/pkg/roll"
+	"github.com/kevinhorst/pgroll/pkg/state"
 )
 
 // Version is the pgroll version

@@ -5,8 +5,8 @@ package expect
 import (
 	"github.com/oapi-codegen/nullable"
 
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/sql2pgroll"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/sql2pgroll"
 )
 
 var AlterColumnOp1 = &migrations.OpAlterColumn{

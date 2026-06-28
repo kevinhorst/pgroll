@@ -9,9 +9,9 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kevinhorst/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 	"github.com/lib/pq"
-	"github.com/xataio/pgroll/pkg/db"
-	"github.com/xataio/pgroll/pkg/schema"
 )
 
 // duplicator duplicates a column in a table, including all constraints and

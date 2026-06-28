@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/kevinhorst/pgroll/cmd/flags"
+	"github.com/kevinhorst/pgroll/pkg/roll"
 	"github.com/spf13/cobra"
-	"github.com/xataio/pgroll/cmd/flags"
-	"github.com/xataio/pgroll/pkg/roll"
 )
 
 func latestSchemaCmd() *cobra.Command {

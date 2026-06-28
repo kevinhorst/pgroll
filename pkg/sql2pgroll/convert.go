@@ -7,7 +7,7 @@ import (
 
 	pgq "github.com/xataio/pg_query_go/v6"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 // Convert converts a SQL statement to a slice of pgroll operations.

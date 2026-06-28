@@ -5,8 +5,8 @@ package migrations_test
 import (
 	"testing"
 
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgroll/pkg/migrations"
 )
 
 func TestFileUpdater(t *testing.T) {

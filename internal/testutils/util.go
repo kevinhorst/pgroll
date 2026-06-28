@@ -17,8 +17,8 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/xataio/pgroll/pkg/roll"
-	"github.com/xataio/pgroll/pkg/state"
+	"github.com/kevinhorst/pgroll/pkg/roll"
+	"github.com/kevinhorst/pgroll/pkg/state"
 )
 
 // The version of postgres against which the tests are run

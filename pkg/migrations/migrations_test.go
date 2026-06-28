@@ -8,10 +8,10 @@ import (
 	"testing"
 	"testing/fstest"
 
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/schema"
 )
 
 func TestMigrationsIsolated(t *testing.T) {

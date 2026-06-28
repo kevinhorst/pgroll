@@ -2,7 +2,7 @@
 
 package expect
 
-import "github.com/xataio/pgroll/pkg/migrations"
+import "github.com/kevinhorst/pgroll/pkg/migrations"
 
 var RenameColumnOp1 = &migrations.OpRenameColumn{
 	Table: "foo",

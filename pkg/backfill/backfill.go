@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevinhorst/pgroll/pkg/backfill/templates"
+	"github.com/kevinhorst/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/pkg/schema"
 	"github.com/lib/pq"
-	"github.com/xataio/pgroll/pkg/backfill/templates"
-	"github.com/xataio/pgroll/pkg/db"
-	"github.com/xataio/pgroll/pkg/schema"
 )
 
 // CNeedsBackfillColumn is the name of the internal column created

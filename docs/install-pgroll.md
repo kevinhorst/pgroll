@@ -2,7 +2,7 @@
 
 ## Binaries
 
-Binaries are available for Linux, macOS & Windows on our [Releases](https://github.com/xataio/pgroll/releases) page.
+Binaries are available for Linux, macOS & Windows on our [Releases](https://github.com/kevinhorst/pgroll/releases) page.
 
 ## From source
 

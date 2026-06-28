@@ -9,7 +9,7 @@ import (
 	"github.com/oapi-codegen/nullable"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 func TestSetComment(t *testing.T) {

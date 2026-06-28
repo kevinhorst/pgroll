@@ -5,9 +5,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/kevinhorst/pgroll/cmd/flags"
+	"github.com/kevinhorst/pgroll/internal/connstr"
 	"github.com/spf13/cobra"
-	"github.com/xataio/pgroll/cmd/flags"
-	"github.com/xataio/pgroll/internal/connstr"
 )
 
 func latestURLCmd() *cobra.Command {

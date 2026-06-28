@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/xataio/pgroll/internal/testutils"
-	"github.com/xataio/pgroll/pkg/db"
+	"github.com/kevinhorst/pgroll/internal/testutils"
+	"github.com/kevinhorst/pgroll/pkg/db"
 )
 
 func TestMain(m *testing.M) {

@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/xataio/pgroll/pkg/migrations"
-	"github.com/xataio/pgroll/pkg/sql2pgroll"
-	"github.com/xataio/pgroll/pkg/sql2pgroll/expect"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/sql2pgroll"
+	"github.com/kevinhorst/pgroll/pkg/sql2pgroll/expect"
 )
 
 func TestConvertCreateTableStatements(t *testing.T) {

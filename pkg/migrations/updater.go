@@ -61,7 +61,7 @@ func (u *FileUpdater) Update(rawMigration *RawMigration) (*Migration, error) {
 //	columns: [{"column": "name"}, {"column": "email"}]
 //
 // breaking change was released in v0.10.0
-// PR: https://github.com/xataio/pgroll/pull/697
+// PR: https://github.com/kevinhorst/pgroll/pull/697
 func UpdateCreateIndexColumnsList(op map[string]any) (map[string]any, error) {
 	body, err := json.Marshal(op)
 	if err != nil {

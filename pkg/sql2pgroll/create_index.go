@@ -8,7 +8,7 @@ import (
 
 	pgq "github.com/xataio/pg_query_go/v6"
 
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 // convertCreateIndexStmt converts CREATE INDEX statements into pgroll operations.

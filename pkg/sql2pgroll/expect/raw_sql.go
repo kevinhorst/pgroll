@@ -2,7 +2,7 @@
 
 package expect
 
-import "github.com/xataio/pgroll/pkg/migrations"
+import "github.com/kevinhorst/pgroll/pkg/migrations"
 
 func RawSQLOp(sql string) *migrations.OpRawSQL {
 	return &migrations.OpRawSQL{Up: sql}

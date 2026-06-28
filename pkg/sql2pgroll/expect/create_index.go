@@ -3,7 +3,7 @@
 package expect
 
 import (
-	"github.com/xataio/pgroll/pkg/migrations"
+	"github.com/kevinhorst/pgroll/pkg/migrations"
 )
 
 var CreateIndexOp1 = &migrations.OpCreateIndex{

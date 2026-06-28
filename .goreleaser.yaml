@@ -12,7 +12,7 @@ builds:
     flags:
       - -tags=netgo,osusergo
     ldflags:
-      - -X github.com/xataio/pgroll/cmd.Version={{ .Version }}
+      - -X github.com/kevinhorst/pgroll/cmd.Version={{ .Version }}
     env:
       - CGO_ENABLED=1
     goos:

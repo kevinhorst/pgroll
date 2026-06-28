@@ -23,10 +23,10 @@ Learn how to use `pgroll` in your developer workflow
 
 If you have questions reach out to us on our
 * [Discord server](https://xata.io/discord)
-* [Github Discussion board](https://github.com/xataio/pgroll/discussions)
+* [Github Discussion board](https://github.com/kevinhorst/pgroll/discussions)
 
 If you want to report issues or submit feedback visit
-* [Github Issues](https://github.com/xataio/pgroll/issues)
+* [Github Issues](https://github.com/kevinhorst/pgroll/issues)
 
 ## Supported Postgres versions
 
